@@ -1,0 +1,12 @@
+@font-face {
+  font-family: 'RubikVinyl-Regular';
+  src: url('./assets/RubikVinyl-Regular.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+h1 {
+    font-family: RubikVinyl-Regular;
+    font-size: 4rem;
+}
+
