@@ -1,58 +1,52 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import CardList from './CardList.jsx';
-// import { robots } from './robots.jsx';
 import SearchBox from './SearchBox';
 import './index.css'
 import './App.css'
-import Scroll from './Scroll.jsx'
 
-class App extends React.Component {
-    constructor() {
-        super()
-        this.state = {
-            robots: [],
-            searchfield: ''
-        }
-    }
+function App() {
 
+    // USING HOOKS: stand naming convention const [state, function]
+    const [robots, setRobots] = useState([])
+    const [searchfield, setSearchfield] = useState('')
+    const [count, setCount] = useState(0)
 
+    // useEffect by default automatically gets run everytime the function App() gets run. So this is essentially serving the purpose of componentDidMount()
 
-    componentDidMount() {
-        // this.state.robots = ... NEVER DO THIS!!
-        // this.setState({robots: robots}) // use this instead 
-
+    useEffect(() => {
         fetch('https://jsonplaceholder.typicode.com/users')
-        .then(response => response.json() )
-        .then(users => this.setState({robots: users}))
+        .then(response => response.json())
+        .then(users => setRobots(users))
+    },[]) // this second arguement tells useEffect() when to stop because useEffect() runs -by default- everytime the functions runs it will run infinitely becuase App() will keep rerendering everytime useEffect imports our users. useEffect gets users -> app runs -> useEffect runs again, infinite loop. But we can give it [] as the second arguement to tell it to only rerun when the [] -the thing in the second arguement- changes. But this wont change so it useEffect() only runs once, when the App() function runs and we just get the users, then we update them in the cardList by passing filteredRobots.
+
+    const onSearchChange = (event) => {
+        setSearchfield(event.target.value)
     }
 
-
-    onSearchChange = (event) => {
-        this.setState({searchfield: event.target.value})
-    }
-
-    render() {
-
-        const filteredRobots = this.state.robots.filter(robot => {
-            return robot.name.toLowerCase().includes(this.state.searchfield.toLowerCase())
+    const filteredRobots = robots.filter(robot => {
+            return robot.name.toLowerCase().includes(searchfield.toLowerCase())
         })
 
-        if (!this.state.robots.length) {
+        console.log(robots, searchfield)
+        if (!robots.length) {
             return <h1 className="flex justify-center items-center vh-100">Loading</h1>
         } else 
             {
             return (
-        <div className="tc">
-            <h1>Robo Friends</h1>
-            <SearchBox searchChange={this.onSearchChange}/>
-            <CardList robots={filteredRobots}/>
-        </div>
-    );
-
-
-        }
+                <div className="tc">
+                    <h1>Robo Friends</h1>
+                    <button onClick={() => setCount(count+1)}>Click Me!</button>
+                    <button className="ma2" onClick={() => setCount(0)}>Reset</button>
+                    <div>
+                    <p className="dib justify-center pa bg-dark-pink br2 pa2">{`The count is ${count}`}</p>
+                    </div>
+                    <SearchBox searchChange={onSearchChange}/>
+                    <CardList robots={filteredRobots}/>
+                </div>
+                   );
+            }
             
-    }
+    
 }
 
 export default App;
